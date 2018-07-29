@@ -4,7 +4,7 @@ import pytest
 from jinja2_component.cache import FragmentCacheExtension
 
 template_string = """\
-{% cache 'sidebar', 300 %}
+{% cache 'Python', 300 %}
 <div class="sidebar">
     ...
 </div>
@@ -20,14 +20,10 @@ def environment():
 
 @pytest.fixture
 def first_context():
-    class A:
-        def complicated_value(self):
-            return 999
-
-    return dict(a=A())
+    return dict(name='Universe')
 
 
 def test_run(environment, first_context):
     template = environment.from_string(template_string)
     result = template.render(first_context)
-    assert '<h1>Hello</h1>' == result
+    assert '<h1>Hello World</h1>' == result

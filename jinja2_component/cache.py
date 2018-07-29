@@ -2,9 +2,14 @@ from jinja2 import nodes
 from jinja2.ext import Extension
 
 
+class HelloComponent:
+    def __call__(self, name='World'):
+        return f'<h1>Hello {name}</h1>'
+
+
 class FragmentCacheExtension(Extension):
     # a set of names that trigger the extension.
-    tags = set(['cache'])
+    tags = {'cache'}
 
     def __init__(self, environment):
         super(FragmentCacheExtension, self).__init__(environment)
@@ -38,8 +43,13 @@ class FragmentCacheExtension(Extension):
 
         # now return a `CallBlock` node that calls our _cache_support
         # helper method on this extension.
-        return nodes.CallBlock(self.call_method('_cache_support', args),
+        return nodes.CallBlock(self.call_method('_call_component', args),
                                [], [], body).set_lineno(lineno)
+
+    def _call_component(self, name, timeout, caller):
+        component = HelloComponent()
+        result = component(name='World')
+        return result
 
     def _cache_support(self, name, timeout, caller):
         """Helper callback."""
