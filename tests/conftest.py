@@ -1,5 +1,3 @@
-from random import randint
-
 import pytest
 
 from jinja2 import Environment, nodes, Template
@@ -23,11 +21,21 @@ class Args(Extension):
 
     def parse(self, parser):
         lineno = next(parser.stream).lineno
-        call = self.call_method('_render', )
-        return nodes.Output([call], lineno=lineno)
+        args = []
+        while parser.stream.current.type != 'block_end':
+            args.append(parser.parse_expression())
+            parser.stream.skip_if('comma')
 
-    def _render(self):
-        return self.__class__.__name__
+        body = parser.parse_statements(['name:endArgs'], drop_needle=True)
+        call = self.call_method('_render', args=args)
+        result = nodes.CallBlock(call, [], [], [])
+        result.set_lineno(lineno)
+        return result
+
+    def _render(self, *args, caller):
+        cn = self.__class__.__name__
+        a = str(args)
+        return f'{cn}-{a}'
 
 
 @pytest.fixture

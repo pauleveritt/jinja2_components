@@ -1,5 +1,5 @@
 import pytest
-from jinja2 import Template
+from jinja2 import Template, TemplateSyntaxError
 
 from tests.conftest import Simple
 
@@ -30,8 +30,14 @@ def test_good_render(simple_template):
     assert 'Simple' == output
 
 
-def test_args_zero(args_environment):
+def test_args_no_close(args_environment):
     template_string = '{% Args %}'
+    with pytest.raises(TemplateSyntaxError):
+        args_environment.from_string(template_string)
+
+
+def test_args_zero(args_environment):
+    template_string = '{% Args "one", "two" %}{% endArgs %}'
     template = args_environment.from_string(template_string)
     result = template.render(dict())
-    assert 'Args' == result
+    assert "Args-('one', 'two')" == result
