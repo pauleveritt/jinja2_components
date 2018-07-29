@@ -36,8 +36,29 @@ def test_args_no_close(args_environment):
         args_environment.from_string(template_string)
 
 
-def test_args_zero(args_environment):
-    template_string = '{% Args "one", "two" %}{% endArgs %}'
+@pytest.mark.parametrize(
+    'template_string, expected',
+    [
+        ('{% Args %}{% endArgs %}',
+         "Args-()"),
+        ('{% Args "one" %}{% endArgs %}',
+         "Args-('one',)"),
+        ('{% Args "one", "two" %}{% endArgs %}',
+         "Args-('one', 'two')"),
+    ]
+)
+def test_args_pass(args_environment, template_string, expected):
     template = args_environment.from_string(template_string)
     result = template.render(dict())
-    assert "Args-('one', 'two')" == result
+    assert expected == result
+
+
+@pytest.mark.parametrize(
+    'template_string, expected',
+    [
+        ('{% Args "one %}{% endArgs %}',TemplateSyntaxError),
+    ]
+)
+def test_args_fail(args_environment, template_string, expected):
+    with pytest.raises(expected):
+        args_environment.from_string(template_string)
