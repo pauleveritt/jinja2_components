@@ -49,19 +49,19 @@ class FragmentCacheExtension(Extension):
     def _call_component(self, name, timeout, caller):
         component = HelloComponent()
         result = component(name='World')
-        return result
-
-    def _cache_support(self, name, timeout, caller):
-        """Helper callback."""
-        key = self.environment.fragment_cache_prefix + name
-
-        # try to load the block from the cache
-        # if there is no fragment in the cache, render it and store
-        # it in the cache.
-        return '<h1>Hello</h1>'
-        rv = self.environment.fragment_cache.get(key)
-        if rv is not None:
-            return rv
         rv = caller()
-        self.environment.fragment_cache.add(key, rv, timeout)
-        return rv
+        return result
+    #
+    # def _cache_support(self, name, timeout, caller):
+    #     """Helper callback."""
+    #     key = self.environment.fragment_cache_prefix + name
+    #
+    #     # try to load the block from the cache
+    #     # if there is no fragment in the cache, render it and store
+    #     # it in the cache.
+    #     rv = self.environment.fragment_cache.get(key)
+    #     if rv is not None:
+    #         return rv
+    #     rv = caller()
+    #     self.environment.fragment_cache.add(key, rv, timeout)
+    #     return rv

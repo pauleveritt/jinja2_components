@@ -4,7 +4,7 @@ import pytest
 from jinja2_component.cache import FragmentCacheExtension
 
 template_string = """\
-{% cache 'Python', 300 %}
+{% cache 'Python', 50 %}
 <div class="sidebar">
     ...
 </div>
