@@ -12,7 +12,7 @@ def rootenv_simplest():
     class Root:
         name: str = 'World'
         template: str = '<div id="root">Root {{name}} children: {{' \
-                        'children}}</div>'
+                        'children}} outer: {{ outer }}</div>'
 
     env = ComponentEnvironment()
     env.components['Root'] = Root

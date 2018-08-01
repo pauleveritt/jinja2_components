@@ -25,15 +25,35 @@ class ComponentExtension(Extension):
         self.tag_name = parser.stream.current[2]
 
         lineno = next(parser.stream).lineno
+
         args = []
-        while parser.stream.current.type != 'block_end':
-            args.append(parser.parse_expression())
-            parser.stream.skip_if('comma')
+
+        # Parse the key/value pairs out of the AST structure into
+        # a regular dict.
+        self.props = dict()
+
+        if True:
+            targets = []
+            while parser.stream.current.type != 'block_end':
+                lineno = parser.stream.current.lineno
+                if targets:
+                    parser.stream.expect('comma')
+                target = parser.parse_assign_target()
+                target.set_ctx('param')
+                targets.append(target)
+                parser.stream.expect('assign')
+                args.append(parser.parse_expression())
+                self.props['outer'] = 123
+        else:
+            while parser.stream.current.type != 'block_end':
+                args.append(parser.parse_expression())
+                parser.stream.skip_if('comma')
 
         end_tag_name = f'name:end{self.tag_name}'
         body = parser.parse_statements([end_tag_name], drop_needle=True)
+
         call = self.call_method('_callblock', args=args)
-        result = nodes.CallBlock(call, args, [], body)
+        result = nodes.CallBlock(call, [], [], body)
         result.set_lineno(lineno)
         return result
 
@@ -43,7 +63,8 @@ class ComponentExtension(Extension):
         component_class = env.components[self.tag_name]
         template = env.from_string(component_class.template)
         component = component_class()
-        context = asdict(component)
+
+        context = {**self.props, **asdict(component)}
         context['children'] = children
-        result_one = template.render(context)
-        return result_one
+        result = template.render(context)
+        return result
