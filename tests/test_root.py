@@ -66,3 +66,24 @@ def test_Root_multiple(root_environment):
 def test_Root_fail(root_environment, template_string, expected):
     with pytest.raises(expected):
         root_environment.from_string(template_string)
+
+
+def test_Root_args(root_environment):
+    ts = """
+<body>{% Root z=1 %}x={{ x }}{% endRoot %}</body>
+    """
+    template = root_environment.from_string(ts)
+    r = template.render(dict(x=99))
+    soup = BeautifulSoup(r, 'html5lib')
+    result = soup.find(id='root').string
+
+    # Now assert
+    expected = 'Root World children: x=99'
+    assert expected == result
+
+    # Second
+    r = template.render(dict(x=89))
+    soup = BeautifulSoup(r, 'html5lib')
+    result = soup.find(id='root').string
+    expected = 'Root World children: x=89'
+    assert expected == result
