@@ -1,19 +1,20 @@
 from dataclasses import asdict, dataclass
+from typing import Dict
 
 import pytest
-
-from jinja2 import Environment, nodes, Template
+from jinja2 import Environment, nodes
 from jinja2.ext import Extension
 
 
 @dataclass
 class RootComponent:
     name: str = 'World'
-    template: str = '<d>Root {{name}}</d>'
+    template: str = '<div id="root">Root {{name}} children: {{children}}</div>'
 
 
 class ComponentExtension(Extension):
     tags = {'Root'}
+    tag_name: str
 
     def parse(self, parser):
         # Which tag did we match on?
@@ -35,31 +36,27 @@ class ComponentExtension(Extension):
     def _callblock(self, *args, caller):
         children = caller()
         env = self.environment
-        component_class = env.get_component_class(self.tag_name)
-        ts = RootComponent.template
-        template = env.from_string(ts)
+        component_class = env.components[self.tag_name]
+        template = env.from_string(component_class.template)
         component = component_class()
-        result_one = template.render(asdict(component))
+        context = asdict(component)
+        context['children'] = children
+        result_one = template.render(context)
         return result_one
 
 
 class ComponentEnvironment(Environment):
+    components: Dict[str, dataclass] = {}
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def get_component_class(self, class_name: str):
-        return RootComponent
-
 
 @pytest.fixture
-def environment():
+def root_environment():
     env = ComponentEnvironment()
-    return env
-
-
-@pytest.fixture
-def root_environment(environment):
+    env.components['Root'] = RootComponent
     ComponentExtension.tags = {'Root'}
-    environment.add_extension(ComponentExtension)
+    env.add_extension(ComponentExtension)
 
-    return environment
+    return env

@@ -1,9 +1,10 @@
 import pytest
+from bs4 import BeautifulSoup
 from jinja2 import TemplateSyntaxError
 
 
-def test_root_environment(environment):
-    assert 'ComponentEnvironment' == environment.__class__.__name__
+def test_root_environment(root_environment):
+    assert 'ComponentEnvironment' == root_environment.__class__.__name__
 
 
 # @pytest.mark.parametrize(
@@ -27,13 +28,17 @@ def test_root_environment(environment):
 
 def test_Root_multiple(root_environment):
     ts = """
-<b>{% Root %}x={{ x }}{% endRoot %}</b>
+<body>{% Root %}x={{ x }}{% endRoot %}</body>
     """
     template = root_environment.from_string(ts)
-    result_one = template.render(dict(x=99))
-    expected = '<b><d>Root World</d></b>'
-    assert expected == str.strip(result_one)
-    result_two = template.render(dict(x=88))
+    r = template.render(dict(x=99))
+    soup = BeautifulSoup(r, 'html5lib')
+    result = soup.find(id='root').string
+
+    # Now assert
+    expected = 'Root World children: x=99'
+    assert expected == result
+    # result_two = template.render(dict(x=88))
     # expected = 'Root-()-\n<div>x=88</div>'
     # assert expected == str.strip(result_two)
 
