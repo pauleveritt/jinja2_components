@@ -62,14 +62,15 @@ class Root(Extension):
 
         body = parser.parse_statements(['name:endRoot'], drop_needle=True)
         call = self.call_method('_render', args=args)
-        result = nodes.CallBlock(call, [], [], [])
+        result = nodes.CallBlock(call, args, [], body)
         result.set_lineno(lineno)
         return result
 
     def _render(self, *args, caller):
         cn = self.__class__.__name__
         a = str(args)
-        return f'{cn}-{a}'
+        c = caller()
+        return f'{cn}-{a}-{c}'
 
 
 @pytest.fixture
