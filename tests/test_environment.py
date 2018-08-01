@@ -1,7 +1,5 @@
 import pytest
-from jinja2 import Template, TemplateSyntaxError
-
-from tests.conftest import Simple
+from jinja2 import TemplateSyntaxError
 
 
 def test_basic_environment(environment):
@@ -43,7 +41,7 @@ def test_args_no_close(args_environment):
          "Args-()"),
         ('{% Args "one" %}{% endArgs %}',
          "Args-('one',)"),
-        ('{% Args "one", "two" %}{% endArgs %}',
+        ('{% with foo = 42 %}{% Args "one", "two" %}{% endArgs %}{% endwith %}',
          "Args-('one', 'two')"),
     ]
 )
