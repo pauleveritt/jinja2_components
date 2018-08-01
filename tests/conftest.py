@@ -1,3 +1,5 @@
+from dataclasses import asdict, dataclass
+
 import pytest
 
 from jinja2 import Environment, nodes, Template
@@ -50,7 +52,13 @@ class Args(Extension):
         return f'{cn}-{a}'
 
 
-class Root(Extension):
+@dataclass
+class RootComponent:
+    name: str = 'World'
+    template: str = '<d>Root {{name}}</d>'
+
+
+class RootExtension(Extension):
     tags = {'Root'}
 
     def parse(self, parser):
@@ -61,16 +69,18 @@ class Root(Extension):
             parser.stream.skip_if('comma')
 
         body = parser.parse_statements(['name:endRoot'], drop_needle=True)
-        call = self.call_method('_render', args=args)
+        call = self.call_method('_callblock', args=args)
         result = nodes.CallBlock(call, args, [], body)
         result.set_lineno(lineno)
         return result
 
-    def _render(self, *args, caller):
-        cn = self.__class__.__name__
-        a = str(args)
-        c = caller()
-        return f'{cn}-{a}-{c}'
+    def _callblock(self, *args, caller):
+        children = caller()
+        ts = RootComponent.template
+        template = self.environment.from_string(ts)
+        component = RootComponent()
+        result_one = template.render(asdict(component))
+        return result_one
 
 
 @pytest.fixture
@@ -94,7 +104,7 @@ def args_environment(environment):
 
 @pytest.fixture
 def root_environment(environment):
-    environment.add_extension(Root)
+    environment.add_extension(RootExtension)
     environment.add_extension(Heading)
     environment.add_extension(Logo1)
     environment.add_extension(Logo2)
