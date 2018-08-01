@@ -1,29 +1,30 @@
+from dataclasses import dataclass
+
 import pytest
 from bs4 import BeautifulSoup
 from jinja2 import TemplateSyntaxError
 
 
+@dataclass
+class Root:
+    name: str = 'World'
+    template: str = '<div id="root">Root {{name}} children: {{children}}</div>'
+
+
+@pytest.fixture
+def root_environment():
+    from jinja2_component.environment import ComponentEnvironment
+    from jinja2_component.extension import ComponentExtension
+    env = ComponentEnvironment()
+    env.components['Root'] = Root
+    ComponentExtension.tags = {'Root'}
+    env.add_extension(ComponentExtension)
+
+    return env
+
+
 def test_root_environment(root_environment):
     assert 'ComponentEnvironment' == root_environment.__class__.__name__
-
-
-# @pytest.mark.parametrize(
-#     'template_string, expected',
-#     [
-#         ('{% Root %}{% endRoot %}',
-#          "Root-()"),
-#         ('{% Root "one" %}{% endRoot %}',
-#          "Root-('one',)"),
-#         (
-#                 '{% with foo = 42 %}{% Root "one", "two" %}{% endRoot %}{% '
-#                 'endwith %}',
-#                 "Root-('one', 'two')"),
-#     ]
-# )
-# def test_Root_pass(root_environment, template_string, expected):
-#     template = root_environment.from_string(template_string)
-#     result = template.render(dict())
-#     assert expected == result
 
 
 def test_Root_multiple(root_environment):

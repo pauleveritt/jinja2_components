@@ -44,7 +44,8 @@ class Args(Extension):
             args.append(parser.parse_expression())
             parser.stream.skip_if('comma')
 
-        body = parser.parse_statements(['name:endArgs'], drop_needle=True)
+        body = parser.parse_statements(['name:endArgs'],
+drop_needle=True)
         call = self.call_method('_render', args=args)
         result = nodes.CallBlock(call, [], [], [])
         result.set_lineno(lineno)
@@ -73,8 +74,9 @@ def test_fail_bad_extension(environment):
 
 
 def test_good_extension(simple_template):
-    ext = simple_template.environment.extensions['test_environment.Simple']
-    assert 'test_environment.Simple' == ext.identifier
+    ext = simple_template.environment.extensions[
+'test_component.Simple']
+    assert 'test_component.Simple' == ext.identifier
 
 
 def test_good_render(simple_template):
@@ -95,10 +97,6 @@ def test_args_no_close(args_environment):
          "Args-()"),
         ('{% Args "one" %}{% endArgs %}',
          "Args-('one',)"),
-        (
-                '{% with foo = 42 %}{% Args "one", "two" %}{% endArgs %}{% '
-                'endwith %}',
-                "Args-('one', 'two')"),
     ]
 )
 def test_args_pass(args_environment, template_string, expected):
