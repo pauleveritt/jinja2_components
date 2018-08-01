@@ -25,6 +25,17 @@ def test_Root_pass(root_environment, template_string, expected):
     assert expected == result
 
 
+def test_Root_multiple(root_environment):
+    ts = """
+{% Root %}
+<div>1</div>
+{% endRoot %}    
+    """
+    template = root_environment.from_string(ts)
+    result = template.render(dict())
+    assert 'Root-()' == str.strip(result)
+
+
 @pytest.mark.parametrize(
     'template_string, expected',
     [
