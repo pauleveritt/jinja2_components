@@ -41,9 +41,11 @@ def make_context(component_class, passed_in, di: Dict):
     for field in dataclasses.fields(component_class):
         fn = field.name
 
+        # First priority: passed in
         if fn in passed_in:
             props[fn] = passed_in[fn]
 
+        # Second priority: DI
         elif 'di' in field.metadata:  # Do the DI dance
             # - Is this a DI field?
             #   * If so, and not available, raise an exception
@@ -77,22 +79,18 @@ class ComponentExtension(Extension):
         # a regular dict.
         self.props = dict()
 
-        if True:
-            targets = []
-            while parser.stream.current.type != 'block_end':
-                lineno = parser.stream.current.lineno
-                if targets:
-                    parser.stream.expect('comma')
-                target = parser.parse_assign_target()
-                target.set_ctx('param')
-                targets.append(target)
-                parser.stream.expect('assign')
-                args.append(parser.parse_expression())
-                self.props['outer'] = 123
-        else:
-            while parser.stream.current.type != 'block_end':
-                args.append(parser.parse_expression())
-                parser.stream.skip_if('comma')
+        targets = []
+        while parser.stream.current.type != 'block_end':
+            lineno = parser.stream.current.lineno
+            if targets:
+                parser.stream.expect('comma')
+            target = parser.parse_assign_target()
+            target.set_ctx('param')
+            targets.append(target)
+            parser.stream.expect('assign')
+            value = parser.parse_expression()
+            args.append(value)
+            self.props['outer'] = value.value
 
         end_tag_name = f'name:end{self.tag_name}'
         body = parser.parse_statements([end_tag_name], drop_needle=True)
