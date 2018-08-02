@@ -12,12 +12,13 @@ registered "components" and dispatch correctly.
 """
 import dataclasses
 from dataclasses import asdict
+from typing import Dict
 
 from jinja2 import nodes
 from jinja2.ext import Extension
 
 
-def get_props(component_class, passed_in):
+def make_context(component_class, passed_in, di: Dict):
     """ Merge passed-in props, defaults, and DI props """
 
     # Iterate over what the component_class has for fields
@@ -43,10 +44,15 @@ def get_props(component_class, passed_in):
         if fn in passed_in:
             props[fn] = passed_in[fn]
 
-        elif False:  # Do the DI dance
+        elif 'di' in field.metadata:  # Do the DI dance
             # - Is this a DI field?
             #   * If so, and not available, raise an exception
-            pass
+            di_value = di.get(field.type)
+            if di_value is None:
+                t = field.type.__name__
+                msg = f'Dependency injector cannot find type "{t}"'
+                raise KeyError(msg)
+            props[fn] = di_value
         else:
             # Get the default value. If there isn't one, raise an
             # exception
