@@ -11,22 +11,14 @@ registered "components" and dispatch correctly.
 
 """
 import dataclasses
-from dataclasses import asdict
 from typing import Dict
 
 from jinja2 import nodes
 from jinja2.ext import Extension
 
 
-def make_context(component_class, passed_in, di: Dict):
-    """ Merge passed-in props, defaults, and DI props """
-
-    # Iterate over what the component_class has for fields
-    #   * Otherwise, use it.
-    # Add this field/value to props
-    # Construct the dataclass instance and return it, which will raise
-    # an exception if something required isn't available.
-    # Later, have a global flag offering validation.
+def make_context(component_class, passed_in, di: Dict, children: str = None):
+    """ Merge passed-in props, defaults, DI props, children """
 
     props = dict()
 
@@ -39,11 +31,16 @@ def make_context(component_class, passed_in, di: Dict):
             raise ValueError(f'{passed_in_key} not in component dataclass')
 
     for field in dataclasses.fields(component_class):
-        fn = field.name
+        field_name = field.name
 
-        # First priority: passed in
-        if fn in passed_in:
-            props[fn] = passed_in[fn]
+        if field_name == 'children':
+            # This component wants to use the subnodes of this
+            # component
+            # TODO use types annotation instead of magic names
+            props['children'] = children
+        # Next priority: passed in
+        elif field_name in passed_in:
+            props[field_name] = passed_in[field_name]
 
         # Second priority: DI
         elif 'di' in field.metadata:  # Do the DI dance
@@ -54,12 +51,13 @@ def make_context(component_class, passed_in, di: Dict):
                 t = field.type.__name__
                 msg = f'Dependency injector cannot find type "{t}"'
                 raise KeyError(msg)
-            props[fn] = di_value
+            props[field_name] = di_value
         else:
             # Get the default value. If there isn't one, raise an
             # exception
-            props[fn] = field.default
+            props[field_name] = field.default
 
+    # Later, have a global flag offering validation.
     return component_class(**props)
 
 
@@ -90,7 +88,7 @@ class ComponentExtension(Extension):
             parser.stream.expect('assign')
             value = parser.parse_expression()
             args.append(value)
-            self.props['outer'] = value.value
+            self.props[target.name] = value.value
 
         end_tag_name = f'name:end{self.tag_name}'
         body = parser.parse_statements([end_tag_name], drop_needle=True)
@@ -101,13 +99,24 @@ class ComponentExtension(Extension):
         return result
 
     def _callblock(self, *args, caller):
-        children = caller()
         env = self.environment
         component_class = env.components[self.tag_name]
-        template = env.from_string(component_class.template)
-        component = component_class()
 
-        context = {**self.props, **asdict(component)}
-        context['children'] = children
-        result = template.render(context)
+        # Render any child nodes inside the "tags" for this
+        # component's usage
+        children = caller()
+
+        # Make an instance of this component, to be used as the
+        # template context
+        di = dict()
+        context = make_context(
+            component_class,
+            self.props,
+            di,
+            children
+        )
+
+        # Now render
+        template = env.from_string(component_class.template)
+        result = template.render(dataclasses.asdict(context))
         return result

@@ -10,9 +10,10 @@ def rootenv_simplest():
 
     @dataclass
     class Root:
+        children: str = None
         name: str = 'World'
-        template: str = '<div id="root">Root {{name}} children: {{' \
-                        'children}} outer: {{ outer }}</div>'
+        template: str = '''\
+<div id="root">Root {{name}} children: {{children}} name: {{ name }}</div>'''
 
     env = ComponentEnvironment()
     env.components['Root'] = Root
