@@ -10,8 +10,14 @@ from jinja2_component.extension import ComponentExtension
 class Root01:
     children: str = None
     name: str = 'World'
-    template: str = '''\
-<div class="root">Root {{name}} children: {{children}} name: {{ name }}</div>'''
+    template: str = '<div class="root">name={{ name }}</div>'
+
+
+@dataclass
+class Root02:
+    children: str = None
+    name: str = 'World'
+    template: str = '<div class="root">children={{children}}</div>'
 
 
 @pytest.fixture
@@ -20,9 +26,8 @@ def rootenv():
     env.add_extension(ComponentExtension)
 
     # Register all the components
-    ComponentExtension.tags = {'Root01'}
-    for r in (Root01,):
+    ComponentExtension.tags = {'Root01', 'Root02'}
+    for r in (Root01, Root02):
         env.components[r.__name__] = r
 
     return env
-
