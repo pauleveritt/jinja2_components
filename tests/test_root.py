@@ -51,6 +51,14 @@ def test_root_02_children(rootenv: ComponentEnvironment):
     assert 'children=inner=inner' == result
 
 
+def test_root_03_nested_children(rootenv: ComponentEnvironment):
+    ts = "<body>{% Root03 name='Root 3' %}{% endRoot03 %}</body>"
+    context = dict()
+    soup = get_soup(rootenv, ts, context)
+    result = soup.find(class_='child').string
+    assert 'Some Child Name' == result
+
+
 #   Failures
 @pytest.mark.parametrize(
     'template_string, expected',
@@ -62,4 +70,3 @@ def test_root_02_children(rootenv: ComponentEnvironment):
 def test_root_fail(rootenv, template_string, expected):
     with pytest.raises(expected):
         rootenv.from_string(template_string)
-

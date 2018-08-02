@@ -20,14 +20,32 @@ class Root02:
     template: str = '<div class="root">children={{children}}</div>'
 
 
+@dataclass
+class Child01:
+    child_name: str = 'Child'
+    template: str = '<div class="child">{{child_name}}</div>'
+
+
+@dataclass
+class Root03:
+    children: str = None
+    name: str = 'World'
+    template: str = '''\
+<div class="root">
+    <h1>Name: {{name}}</h1>
+    {% Child01 child_name='Some Child Name'%}{% endChild01 %}
+</div>
+'''
+
+
 @pytest.fixture
 def rootenv():
     env = ComponentEnvironment()
     env.add_extension(ComponentExtension)
 
     # Register all the components
-    ComponentExtension.tags = {'Root01', 'Root02'}
-    for r in (Root01, Root02):
+    ComponentExtension.tags = {'Root01', 'Root02', 'Root03', 'Child01'}
+    for r in (Root01, Root02, Root03, Child01):
         env.components[r.__name__] = r
 
     return env
