@@ -11,7 +11,7 @@ registered "components" and dispatch correctly.
 
 """
 import dataclasses
-from typing import Dict
+from typing import Dict, Set
 
 from jinja2 import nodes
 from jinja2.ext import Extension
@@ -62,7 +62,7 @@ def make_context(component_class, passed_in, di: Dict, children: str = None):
 
 
 class ComponentExtension(Extension):
-    tags = {'Root'}
+    tags: Set
     tag_name: str
 
     def parse(self, parser):
