@@ -119,6 +119,6 @@ class ComponentExtension(Extension):
         )
 
         # Now render
-        template = env.from_string(component_class.template)
+        template = env.load_template(context)
         result = template.render(dataclasses.asdict(context))
         return result

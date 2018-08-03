@@ -38,3 +38,10 @@ def test_register_components(env, hello_component):
     tag_name = hello_component.__name__
     extensions = list(env.extensions.values())
     assert tag_name in extensions[0].tags
+
+
+def test_load_template(env, hello_component):
+    env.register_components([hello_component])
+    hc = hello_component()
+    env.load_template(hc)
+    assert hello_component.__name__ in env.templates
