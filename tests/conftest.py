@@ -54,7 +54,8 @@ def rootenv():
     ComponentExtension.tags = {
         'Root01', 'Root02', 'Root03', 'Child01', 'Root04',
     }
-    for r in (Root01, Root02, Root03, Child01, Root04):
-        env.components[r.__name__] = r
+    env.register_components([Root01, Root02, Root03, Child01, Root04])
+    # for r in (Root01, Root02, Root03, Child01, Root04):
+    #     env.components[r.__name__] = r
 
     return env

@@ -35,6 +35,6 @@ def test_construction(env):
 def test_register_components(env, hello_component):
     assert {} == env.components
     env.register_components([hello_component])
-    tag_name = hello_component.__class__.__name__
+    tag_name = hello_component.__name__
     extensions = list(env.extensions.values())
     assert tag_name in extensions[0].tags

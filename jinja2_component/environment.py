@@ -24,9 +24,9 @@ class ComponentEnvironment(Environment):
         super().__init__(**kwargs)
         self.add_extension(ComponentExtension)
 
-    def register_components(self, components: List[dataclass()]):
+    def register_components(self, components: List[dataclass]):
         """ Add known components to tags """
         for component in components:
-            tag_name = component.__class__.__name__
+            tag_name = component.__name__
             self.components[tag_name] = component
             ComponentExtension.tags.add(tag_name)
