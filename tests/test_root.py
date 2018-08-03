@@ -59,6 +59,14 @@ def test_root_03_nested_children(rootenv: ComponentEnvironment):
     assert 'Some Child Name' == result
 
 
+def test_root_04_isolation_global(rootenv: ComponentEnvironment):
+    ts = "<body>{% Root04 %}{% endRoot04 %}</body>"
+    context = dict(g='GLOBAL')
+    soup = get_soup(rootenv, ts, context)
+    result = soup.find(class_='root').string
+    assert 'g: ' == result
+
+
 #   Failures
 @pytest.mark.parametrize(
     'template_string, expected',

@@ -38,14 +38,23 @@ class Root03:
 '''
 
 
+# Isolation from global context
+@dataclass
+class Root04:
+    name: str = 'World'
+    template: str = '<div class="root">g: {{g}}</div>'
+
+
 @pytest.fixture
 def rootenv():
     env = ComponentEnvironment()
     env.add_extension(ComponentExtension)
 
     # Register all the components
-    ComponentExtension.tags = {'Root01', 'Root02', 'Root03', 'Child01'}
-    for r in (Root01, Root02, Root03, Child01):
+    ComponentExtension.tags = {
+        'Root01', 'Root02', 'Root03', 'Child01', 'Root04',
+    }
+    for r in (Root01, Root02, Root03, Child01, Root04):
         env.components[r.__name__] = r
 
     return env

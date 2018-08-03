@@ -103,7 +103,9 @@ class ComponentExtension(Extension):
         component_class = env.components[self.tag_name]
 
         # Render any child nodes inside the "tags" for this
-        # component's usage
+        # component's usage.
+        # TODO Find a way for this to not get access to the
+        # global context
         children = caller()
 
         # Make an instance of this component, to be used as the
