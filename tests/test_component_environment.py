@@ -14,7 +14,7 @@ def env():
 def hello_component():
     @dataclass
     class Hello:
-        template: str = '<div>Hello</div>'
+        template_string: str = '<div>Hello</div>'
 
     return Hello
 

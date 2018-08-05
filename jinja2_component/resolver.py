@@ -9,7 +9,7 @@ from pathlib import Path
 MISSING_COMPONENT = 'Must supply a component to resolve template'
 
 
-def resolve_path_string(path_string, component=None):
+def resolve_path_string(path_string, component):
     if ':/' in path_string:
         # Package version
         package, path = path_string.split(':/')
@@ -19,7 +19,8 @@ def resolve_path_string(path_string, component=None):
         # component is omitted, raise an exception
         if component is None:
             raise ValueError(MISSING_COMPONENT)
-        p = Path(getsourcefile(component)).parent / path_string
+        component_path = Path(getsourcefile(component.__class__))
+        p = component_path.parent / path_string
         with open(p, 'r') as f:
             template_string = f.read()
 

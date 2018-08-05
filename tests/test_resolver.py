@@ -22,5 +22,6 @@ def test_import():
     ]
 )
 def test_content(path_string, expected):
-    result = resolve_path_string(path_string, Hello)
+    hello = Hello()
+    result = resolve_path_string(path_string, hello)
     assert expected == result

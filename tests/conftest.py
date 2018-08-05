@@ -10,27 +10,27 @@ from jinja2_component.extension import ComponentExtension
 class Root01:
     children: str = None
     name: str = 'World'
-    template: str = '<div class="root">name={{ name }}</div>'
+    template: str = './templates/root01.html'
 
 
 @dataclass
 class Root02:
     children: str = None
     name: str = 'World'
-    template: str = '<div class="root">children={{children}}</div>'
+    template_string: str = '<div class="root">children={{children}}</div>'
 
 
 @dataclass
 class Child01:
     child_name: str = 'Child'
-    template: str = '<div class="child">{{child_name}}</div>'
+    template_string: str = '<div class="child">{{child_name}}</div>'
 
 
 @dataclass
 class Root03:
     children: str = None
     name: str = 'World'
-    template: str = '''\
+    template_string: str = '''\
 <div class="root">
     <h1>Name: {{name}}</h1>
     {% Child01 child_name='Some Child Name'%}{% endChild01 %}
@@ -42,7 +42,7 @@ class Root03:
 @dataclass
 class Root04:
     name: str = 'World'
-    template: str = '<div class="root">g: {{g}}</div>'
+    template_string: str = '<div class="root">g: {{g}}</div>'
 
 
 @pytest.fixture
