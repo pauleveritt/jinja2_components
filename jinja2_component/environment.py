@@ -22,9 +22,14 @@ class ComponentEnvironment(Environment):
     components: Dict[str, dataclass] = {}
     templates: Dict[str, Template] = {}
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, components: List[dataclass] = []):
+        super().__init__()
         self.add_extension(ComponentExtension)
+        ComponentExtension.tags = {
+            c.__name__
+            for c in components
+        }
+        self.register_components(components)
 
     def register_components(self, components: List[dataclass]):
         """ Add known components to tags """
