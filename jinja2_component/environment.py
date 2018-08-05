@@ -9,6 +9,7 @@ provide helpers on the environment, which acts as the central state
 for various component-related stuff.
 
 """
+import dataclasses
 from dataclasses import dataclass
 from typing import Dict, List
 
@@ -16,6 +17,9 @@ from jinja2 import Environment, Template
 
 from jinja2_component.extension import ComponentExtension
 from jinja2_component.resolver import resolve_path_string
+
+COMPONENT_OR_TEMPLATE = 'Must pass in either a root component or template ' \
+                        'string'
 
 
 class ComponentEnvironment(Environment):
@@ -68,3 +72,30 @@ class ComponentEnvironment(Environment):
             # component that should be rendered via the
             # component's render method.
             return
+
+    def render(self,
+               context: Dict = {},
+               request: Dict = None,
+               component: dataclass = None,
+               template_string: str = None
+               ):
+        """ Render the top of the component/template tree """
+
+        if component is None and template_string is None:
+            raise ValueError(COMPONENT_OR_TEMPLATE)
+
+        if request:
+            context['request'] = request
+
+        if component:
+            # We are doing the root component, grab its template
+            # as the starting point. This is, for example, a Layout.
+            template = self.load_template(component)
+            component_dict = dataclasses.asdict(component)
+            context = {**context, **component_dict}
+        else:
+            template = self.from_string(template_string)
+
+        result = template.render(context)
+
+        return result
