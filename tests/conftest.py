@@ -53,9 +53,20 @@ class Root05:
         return f'Hello {self.name.upper()}'
 
 
+@dataclass
+class Root06:
+    name: str = 'World'
+    template_string: str = '''
+<div class="root"
+>{% Root05 name="Child" %}{% endRoot05 %}</div>'''
+
+
 @pytest.fixture
 def rootenv():
-    components = [Root01, Root02, Root03, Child01, Root04, Root05]
+    components = [
+        Root01, Root02, Root03, Child01, Root04, Root05,
+        Root06,
+    ]
     env = ComponentEnvironment(components)
 
     return env

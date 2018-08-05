@@ -67,6 +67,14 @@ def test_root_04_isolation_global(rootenv: ComponentEnvironment):
     assert 'g: ' == result
 
 
+def test_root_06_child_no_jinja(rootenv: ComponentEnvironment):
+    ts = "<body>{% Root06 %}{% endRoot06 %}</body>"
+    context = dict()
+    soup = get_soup(rootenv, ts, context)
+    result = soup.find(class_='root').string
+    assert 'Hello CHILD' == result
+
+
 #   Failures
 @pytest.mark.parametrize(
     'template_string, expected',
