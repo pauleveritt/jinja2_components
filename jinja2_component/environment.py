@@ -19,11 +19,13 @@ from jinja2_component.resolver import resolve_path_string
 
 
 class ComponentEnvironment(Environment):
-    components: Dict[str, dataclass] = {}
-    templates: Dict[str, Template] = {}
+    components: Dict[str, dataclass]
+    templates: Dict[str, Template]
 
     def __init__(self, components: List[dataclass] = []):
         super().__init__()
+        self.components = {}
+        self.templates = {}
         self.add_extension(ComponentExtension)
         ComponentExtension.tags = {
             c.__name__
