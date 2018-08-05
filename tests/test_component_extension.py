@@ -115,22 +115,9 @@ def test_args_pass(args_environment, template_string, expected):
     assert expected == result
 
 
-def test_component_no_jinja():
-    @dataclass
-    class Hello:
-        name: str = 'world'
-
-        def render(self):
-            return f'Hello {self.name.upper()}'
-
-    # Make an environment and add the component
-    env = ComponentEnvironment()
-    env.add_extension(ComponentExtension)
-    ComponentExtension.tags = {'Hello'}
-    env.register_components([Hello])
-
-    template_string = '{% Hello %}{% endHello %}'
-    template = env.from_string(template_string)
+def test_component_no_jinja(rootenv):
+    template_string = '{% Root05 %}{% endRoot05 %}'
+    template = rootenv.from_string(template_string)
     result = template.render(dict())
     assert 'Hello WORLD' == result
 

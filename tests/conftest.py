@@ -45,6 +45,14 @@ class Root04:
     template_string: str = '<div class="root">g: {{g}}</div>'
 
 
+@dataclass
+class Root05:
+    name: str = 'world'
+
+    def render(self):
+        return f'Hello {self.name.upper()}'
+
+
 @pytest.fixture
 def rootenv():
     env = ComponentEnvironment()
@@ -52,8 +60,8 @@ def rootenv():
 
     # Register all the components
     ComponentExtension.tags = {
-        'Root01', 'Root02', 'Root03', 'Child01', 'Root04',
+        'Root01', 'Root02', 'Root03', 'Child01', 'Root04', 'Root05'
     }
-    env.register_components([Root01, Root02, Root03, Child01, Root04])
+    env.register_components([Root01, Root02, Root03, Child01, Root04, Root05])
 
     return env
