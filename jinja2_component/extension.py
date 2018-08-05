@@ -111,7 +111,7 @@ class ComponentExtension(Extension):
         # Make an instance of this component, to be used as the
         # template context
         di = dict()
-        context = make_context(
+        component = make_context(
             component_class,
             self.props,
             di,
@@ -119,6 +119,10 @@ class ComponentExtension(Extension):
         )
 
         # Now render
-        template = env.load_template(context)
-        result = template.render(dataclasses.asdict(context))
+        template = env.load_template(component)
+        if template is None:
+            # No Jinja2 template, this component should implement render
+            result = component.render()
+        else:
+            result = template.render(dataclasses.asdict(component))
         return result
