@@ -66,8 +66,11 @@ class ComponentExtension(Extension):
     tag_name: str
 
     def parse(self, parser):
-        # Which tag did we match on?
+        # Get the component for the tag name that we matched on
         self.tag_name = parser.stream.current[2]
+        component_class = self.environment.components[self.tag_name]
+        field_names = [f.name for f in dataclasses.fields(component_class)]
+        has_children = 'children' in field_names
 
         lineno = next(parser.stream).lineno
 
@@ -90,8 +93,11 @@ class ComponentExtension(Extension):
             args.append(value)
             self.props[target.name] = value.value
 
-        end_tag_name = f'name:end{self.tag_name}'
-        body = parser.parse_statements([end_tag_name], drop_needle=True)
+        if has_children:
+            end_tag_name = f'name:end{self.tag_name}'
+            body = parser.parse_statements([end_tag_name], drop_needle=True)
+        else:
+            body = ''
 
         call = self.call_method('_callblock', args=args)
         result = nodes.CallBlock(call, [], [], body)

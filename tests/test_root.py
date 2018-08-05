@@ -60,7 +60,7 @@ def test_root_03_nested_children(rootenv: ComponentEnvironment):
 
 
 def test_root_04_isolation_global(rootenv: ComponentEnvironment):
-    ts = "<body>{% Root04 %}{% endRoot04 %}</body>"
+    ts = "<body>{% Root04 %}</body>"
     context = dict(g='GLOBAL')
     soup = get_soup(rootenv, ts, context)
     result = soup.find(class_='root').string
@@ -68,7 +68,7 @@ def test_root_04_isolation_global(rootenv: ComponentEnvironment):
 
 
 def test_root_06_child_no_jinja(rootenv: ComponentEnvironment):
-    ts = "<body>{% Root06 %}{% endRoot06 %}</body>"
+    ts = "<body>{% Root06 %}</body>"
     context = dict()
     soup = get_soup(rootenv, ts, context)
     result = soup.find(class_='root').string

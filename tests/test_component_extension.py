@@ -116,7 +116,7 @@ def test_args_pass(args_environment, template_string, expected):
 
 
 def test_component_no_jinja(rootenv):
-    template_string = '{% Root05 %}{% endRoot05 %}'
+    template_string = '{% Root05 %}'
     template = rootenv.from_string(template_string)
     result = template.render(dict())
     assert 'Hello WORLD' == result

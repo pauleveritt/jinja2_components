@@ -33,7 +33,7 @@ class Root03:
     template_string: str = '''\
 <div class="root">
     <h1>Name: {{name}}</h1>
-    {% Child01 child_name='Some Child Name'%}{% endChild01 %}
+    {% Child01 child_name='Some Child Name'%}
 </div>
 '''
 
@@ -58,7 +58,7 @@ class Root06:
     name: str = 'World'
     template_string: str = '''
 <div class="root"
->{% Root05 name="Child" %}{% endRoot05 %}</div>'''
+>{% Root05 name="Child" %}</div>'''
 
 
 @pytest.fixture
