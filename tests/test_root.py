@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Dict
 
 import pytest
@@ -17,18 +16,6 @@ def get_soup(env: ComponentEnvironment, ts: str, context: Dict):
 
 def test_root_environment(rootenv: ComponentEnvironment):
     assert 'ComponentEnvironment' == rootenv.__class__.__name__
-
-
-def test_layout():
-    @dataclass
-    class Root:
-        name: str = 'World'
-        template_string: str = '<div class="root">{{name}}</div>'
-
-    env = ComponentEnvironment([Root])
-    root = Root()
-    result = env.render(component=root)
-    assert '<div class="root">World</div>' == result
 
 
 def test_root_01_no_prop(rootenv: ComponentEnvironment):
