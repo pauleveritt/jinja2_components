@@ -15,11 +15,9 @@ from typing import Dict, List
 
 from jinja2 import Environment, Template
 
+from jinja2_component.context import make_context
 from jinja2_component.extension import ComponentExtension
 from jinja2_component.resolver import resolve_path_string
-
-COMPONENT_OR_TEMPLATE = 'Must pass in either a root component or template ' \
-                        'string'
 
 
 class ComponentEnvironment(Environment):
@@ -73,29 +71,27 @@ class ComponentEnvironment(Environment):
             # component's render method.
             return
 
-    def render(self,
-               context: Dict = {},
-               request: Dict = None,
-               component: dataclass = None,
-               template_string: str = None
-               ):
-        """ Render the top of the component/template tree """
+    def render_component(self,
+                         component_class: dataclass,
+                         extra_context: Dict = None,
+                         request: Dict = None,
+                         ):
+        """ Render the top of the component tree """
 
-        if component is None and template_string is None:
-            raise ValueError(COMPONENT_OR_TEMPLATE)
+        component = make_context(component_class, extra_context=extra_context)
+        template = self.load_template(component)
+        component_dict = dataclasses.asdict(component)
 
-        if request:
-            context['request'] = request
+        result = template.render(component_dict)
 
-        if component:
-            # We are doing the root component, grab its template
-            # as the starting point. This is, for example, a Layout.
-            template = self.load_template(component)
-            component_dict = dataclasses.asdict(component)
-            context = {**context, **component_dict}
-        else:
-            template = self.from_string(template_string)
+        return result
 
+    def render_string(self, template_string: str, context: Dict = None):
+        """ Render a standalone string """
+
+        if context is None:
+            context = dict()
+        template = self.from_string(template_string)
         result = template.render(context)
 
         return result
