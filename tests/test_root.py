@@ -86,3 +86,7 @@ def test_root_06_child_no_jinja(rootenv: ComponentEnvironment):
 def test_root_fail(rootenv, template_string, expected):
     with pytest.raises(expected):
         rootenv.from_string(template_string)
+
+# TODO Need a test to ensure self.props in parse doesn't wind up with
+# the same data for every run of an extension. Meaning, a new instance is
+# created for every node.

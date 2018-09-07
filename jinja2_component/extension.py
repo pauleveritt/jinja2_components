@@ -11,11 +11,12 @@ registered "components" and dispatch correctly.
 
 """
 import dataclasses
-from typing import Dict, Set
+from typing import Set
 
 from jinja2 import nodes
 from jinja2.ext import Extension
 
+from jinja2_component.context import make_context
 
 
 class ComponentExtension(Extension):
@@ -49,7 +50,10 @@ class ComponentExtension(Extension):
             value = parser.parse_expression()
             args.append(value)
             self.props[target.name] = value.value
+            # args.append(value.value)
 
+        # context = ContextReference()
+        # args.append(context)
         if has_children:
             end_tag_name = f'name:end{self.tag_name}'
             body = parser.parse_statements([end_tag_name], drop_needle=True)
@@ -78,7 +82,7 @@ class ComponentExtension(Extension):
             component_class,
             self.props,
             di,
-            children
+            children=children
         )
 
         # Now render
@@ -87,5 +91,6 @@ class ComponentExtension(Extension):
             # No Jinja2 template, this component should implement render
             result = component.render()
         else:
-            result = template.render(dataclasses.asdict(component))
+            d = dataclasses.asdict(component)
+            result = template.render(**d)
         return result
