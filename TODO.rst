@@ -1,3 +1,13 @@
+Next
+====
+
+- Get parameters passed into the component from the invocation, e.g.
+  ``{% Root10 name=outside_name %}`` with ``dict(outside_name='Outside')``
+
+Later
+=====
+
+
 - Real DI
 
 - request
