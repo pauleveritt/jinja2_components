@@ -9,6 +9,7 @@ pytest = "*"
 "jinj2-component" = {editable = true, path = "."}
 "beautifulsoup4" = "*"
 "html5lib" = "*"
+pytest-mock = "*"
 
 [dev-packages]
 
