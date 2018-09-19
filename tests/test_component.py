@@ -45,7 +45,7 @@ class Args(Extension):
             parser.stream.skip_if('comma')
 
         body = parser.parse_statements(['name:endArgs'],
-drop_needle=True)
+                                       drop_needle=True)
         call = self.call_method('_render', args=args)
         result = nodes.CallBlock(call, [], [], [])
         result.set_lineno(lineno)
@@ -75,7 +75,7 @@ def test_fail_bad_extension(environment):
 
 def test_good_extension(simple_template):
     ext = simple_template.environment.extensions[
-'test_component.Simple']
+        'test_component.Simple']
     assert 'test_component.Simple' == ext.identifier
 
 
@@ -114,3 +114,4 @@ def test_args_pass(args_environment, template_string, expected):
 def test_args_fail(args_environment, template_string, expected):
     with pytest.raises(expected):
         args_environment.from_string(template_string)
+
