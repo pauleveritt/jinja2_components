@@ -15,6 +15,7 @@ from typing import Set
 
 from jinja2 import nodes
 from jinja2.ext import Extension
+from jinja2.nodes import Assign
 
 from jinja2_component.context import make_context
 
@@ -32,28 +33,34 @@ class ComponentExtension(Extension):
 
         lineno = next(parser.stream).lineno
 
-        args = []
-
-        # Parse the key/value pairs out of the AST structure into
-        # a regular dict.
-        self.props = dict()
-
-        targets = []
+        # Use jinja2.With as the basis for extracting the props
+        propnodes = []
         while parser.stream.current.type != 'block_end':
             lineno = parser.stream.current.lineno
-            if targets:
+            if propnodes:
                 parser.stream.expect('comma')
             target = parser.parse_assign_target()
-            target.set_ctx('param')
-            targets.append(target)
             parser.stream.expect('assign')
-            value = parser.parse_expression()
-            args.append(value)
-            self.props[target.name] = value.value
-            # args.append(value.value)
+            expr = parser.parse_expression()
+            propnodes.append(Assign(target, expr, lineno=lineno))
 
-        # context = ContextReference()
-        # args.append(context)
+        props = []
+        for propnode in propnodes:
+            pass
+
+        # while parser.stream.current.type != 'block_end':
+        #     lineno = parser.stream.current.lineno
+        #     if targets:
+        #         parser.stream.expect('comma')
+        #     target = parser.parse_assign_target()
+        #     target.set_ctx('param')
+        #     targets.append(target)
+        #     parser.stream.expect('assign')
+        #     value = parser.parse_expression()
+        #     args.append(value)
+        #     self.props[target.name] = value.value
+        #     # args.append(value.value)
+
         if has_children:
             end_tag_name = f'name:end{self.tag_name}'
             body = parser.parse_statements([end_tag_name], drop_needle=True)

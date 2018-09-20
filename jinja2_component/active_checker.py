@@ -1,6 +1,6 @@
 from jinja2 import Markup
 from jinja2.ext import Extension
-from jinja2.nodes import ContextReference, CallBlock, Assign, Scope
+from jinja2.nodes import ContextReference, CallBlock, Assign, Scope, Name
 
 
 class ActiveCheckerExtension(Extension):
@@ -39,6 +39,7 @@ class WithComponentExtension(Extension):
             parser.stream.expect('assign')
             expr = parser.parse_expression()
             assignments.append(Assign(target, expr, lineno=lineno))
+
         node.body = assignments + \
                     list(parser.parse_statements(
                         ('name:end' + 'coco',),
