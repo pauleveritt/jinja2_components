@@ -44,10 +44,6 @@ class ComponentExtension(Extension):
             expr = parser.parse_expression()
             propnodes.append(Assign(target, expr, lineno=lineno))
 
-        props = []
-        for propnode in propnodes:
-            pass
-
         # while parser.stream.current.type != 'block_end':
         #     lineno = parser.stream.current.lineno
         #     if targets:
@@ -67,7 +63,7 @@ class ComponentExtension(Extension):
         else:
             body = ''
 
-        call = self.call_method('_callblock', args=args)
+        call = self.call_method('_callblock', args=propnodes)
         result = nodes.CallBlock(call, [], [], body)
         result.set_lineno(lineno)
         return result
