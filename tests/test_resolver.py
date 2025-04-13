@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from jinja2_component.resolver import resolve_path_string
+from jinja2_components.resolver import resolve_path_string
 
 
 @dataclass
@@ -17,7 +17,7 @@ def test_import():
 @pytest.mark.parametrize(
     'path_string, expected',
     [
-        ('jinja2_component.test:/t1.html', '<div>t1.html</div>'),
+        ('jinja2_components.test:/t1.html', '<div>t1.html</div>'),
         ('./templates/t2.html', '<div>t2.html</div>'),
     ]
 )

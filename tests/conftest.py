@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from jinja2_component.environment import ComponentEnvironment
+from jinja2_components.environment import ComponentEnvironment
 
 
 @dataclass

@@ -1,12 +1,9 @@
-from dataclasses import dataclass
-
 import pytest
 
 from jinja2 import TemplateSyntaxError, Template, nodes, Environment
 from jinja2.ext import Extension
 
-from jinja2_component.environment import ComponentEnvironment
-from jinja2_component.extension import ComponentExtension
+from jinja2_components.environment import ComponentExtension
 
 
 @pytest.fixture

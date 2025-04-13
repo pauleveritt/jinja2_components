@@ -15,9 +15,9 @@ from typing import Dict, List
 
 from jinja2 import Environment, Template
 
-from jinja2_component.context import make_context
-from jinja2_component.extension import ComponentExtension
-from jinja2_component.resolver import resolve_path_string
+from jinja2_components.context import make_context
+from jinja2_components.extension import ComponentExtension
+from jinja2_components.resolver import resolve_path_string
 
 
 class ComponentEnvironment(Environment):

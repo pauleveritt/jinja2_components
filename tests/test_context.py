@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from jinja2_component.context import make_context
+from jinja2_components.context import make_context
 
 
 def test_import():

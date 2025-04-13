@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from jinja2_component.environment import ComponentEnvironment
+from jinja2_components.environment import ComponentEnvironment
 
 
 @pytest.fixture
@@ -34,7 +34,7 @@ def test_import():
 
 
 def test_construction(env):
-    k = 'jinja2_component.extension.ComponentExtension'
+    k = 'jinja2_components.extension.ComponentExtension'
     ext = env.extensions
     assert 'ComponentEnvironment' == env.__class__.__name__
     assert {} == env.components

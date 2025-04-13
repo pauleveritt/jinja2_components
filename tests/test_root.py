@@ -4,7 +4,7 @@ import pytest
 from bs4 import BeautifulSoup
 from jinja2 import TemplateSyntaxError
 
-from jinja2_component.environment import ComponentEnvironment
+from jinja2_components.environment import ComponentEnvironment
 
 
 def get_soup(env: ComponentEnvironment, ts: str, context: Dict):
